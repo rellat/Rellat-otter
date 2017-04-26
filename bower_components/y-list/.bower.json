@@ -1,0 +1,42 @@
+{
+  "name": "y-list",
+  "version": "0.5.1",
+  "homepage": "http://y-js.org",
+  "authors": [
+    "Kevin Jahns <kevin.jahns@rwth-aachen.de>"
+  ],
+  "description": "List type for Yjs",
+  "main": [
+    "./y-list.js",
+    "./build/node/y-list.js"
+  ],
+  "keywords": [
+    "OT",
+    "collaboration",
+    "synchronization",
+    "ShareJS",
+    "Coweb",
+    "concurrency"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "extras",
+    "test"
+  ],
+  "devDependencies": {
+    "y-test": "y-test#~0.4.0"
+  },
+  "_release": "0.5.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.5.1",
+    "commit": "1dca8c1fe0e5c1e3210d30788b43d840a266abf1"
+  },
+  "_source": "https://github.com/y-js/y-list.git",
+  "_target": "^0.5.1",
+  "_originalSource": "y-list",
+  "_direct": true
+}
