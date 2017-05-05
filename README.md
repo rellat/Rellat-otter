@@ -1,7 +1,7 @@
 # Rellat Otter
 Rellat Alpha with WebRTC. Simple Collaborative Code editor.
 
-You can test it on http://ide.rellat.com:3000/
+You can test it on http://ide.rellat.com/
 
 ## Install
 
