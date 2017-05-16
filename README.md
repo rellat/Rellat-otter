@@ -13,6 +13,9 @@ You can test it on http://ide.rellat.com/
 git clone --recursive https://github.com/kifhan/Rellat-otter.git
 cd Rellat-otter
 npm install
+cd mhweb
+npm install
+cd ..
 ```
 
 - Run
