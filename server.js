@@ -149,5 +149,10 @@ signal.on('request', function (request) {
 })
 
 var appEnv = cfenv.getAppEnv()
-server.listen(appEnv.port)
-console.log('Running at '+appEnv.url)
+if(appEnv.isLocal) {
+  server.listen(80)
+  console.log('Running at localhost:'+ 80)
+} else {
+  server.listen(appEnv.port)
+  console.log('Running at '+appEnv.url)
+}
