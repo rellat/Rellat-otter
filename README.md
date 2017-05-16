@@ -5,13 +5,20 @@ You can test it on http://ide.rellat.com/
 
 ## Install
 
-install node.js and npm.
+- install node.js and npm.
+
+- Download source from github.
 
 ```
 git clone --recursive https://github.com/kifhan/Rellat-otter.git
 cd Rellat-otter
 npm install
-node index.js
+```
+
+- Run
+
+```
+node server.js
 ```
 
 ## Made with
