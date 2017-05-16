@@ -148,11 +148,13 @@ signal.on('request', function (request) {
   request.forward()
 })
 
-var appEnv = cfenv.getAppEnv()
-if(appEnv.isLocal) {
-  server.listen(80)
-  console.log('Running at localhost:'+ 80)
-} else {
-  server.listen(appEnv.port)
-  console.log('Running at '+appEnv.url)
-}
+// var appEnv = cfenv.getAppEnv()
+// server.listen(appEnv.port, appEnv.bind, function() {
+//     console.log("server starting on " + appEnv.url)
+// })
+// server.listen(80, 'ide.rellat.com', function() {
+//   console.log("server starting on ide.rellat.com 80")
+// })
+server.listen(8080, '0.0.0.0', function() {
+  console.log("server starting on localhost 8080")
+})
