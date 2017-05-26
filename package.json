@@ -24,7 +24,15 @@
     "http": "0.0.0",
     "path": "^0.12.7",
     "simple-signal-server": "^1.2.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "y-array": "^10.0.6",
+    "y-leveldb": "0.0.1",
+    "y-map": "^10.0.5",
+    "y-richtext": "^9.0.8",
+    "y-text": "^9.4.0",
+    "y-websockets-client": "^8.0.15",
+    "y-websockets-server": "^9.2.0",
+    "yjs": "^12.1.7"
   },
   "devDependencies": {
     "browserify": "^14.3.0"
