@@ -6,16 +6,17 @@ var cfenv = require('cfenv')
 var signal = require('simple-signal-server')(io)
 var path = require('path')
 
+// express 모듈을 사용해서 로컬 디랙토리를 웹서버 경로에 라우팅한다.
 app.use('/', express.static(path.join(__dirname, 'mhweb')))
+// 최상위 도메인으로 접속하면 ./mhweb 폴더에서 시작
 app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/mhweb/index.html')
+  // 파일명을 명시하지 않으면 index.html을 출력
 })
 
-var HOST = 'https://rationalcoding.github.io/multihack-web/'
-
-// oEmbed
+// routing으로 oEmbed 설정 참고: http://oembed.com/ -> 5.1. Video example
 app.get('/embed', function (req, res, next) {
-  var resURL = HOST+'?embed=true&room='+encodeURI(req.query.room)
+  var resURL = 'https://rationalcoding.github.io/multihack-web/'+'?embed=true&room='+encodeURI(req.query.room)
 
   res.setHeader('Content-Type', 'application/json')
   res.send(JSON.stringify({
@@ -35,6 +36,7 @@ var calls = {}
 var rooms = {}
 var sockets = {}
 
+// websocket은 트래픽 중계용도로 사용한다. multihack-core 참고
 io.on('connection', function (socket) {
   sockets[socket.id] = socket
 
@@ -147,6 +149,8 @@ signal.on('discover', function (request) {
 signal.on('request', function (request) {
   request.forward()
 })
+
+// 웹서버를 시작한다.
 
 // var appEnv = cfenv.getAppEnv()
 // server.listen(appEnv.port, appEnv.bind, function() {

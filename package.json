@@ -17,8 +17,9 @@
   "author": "Chase Lee",
   "license": "MIT",
   "dependencies": {
-    "chrome-remote-interface": "^0.20.0",
     "cfenv": "^1.0.4",
+    "child_process": "^1.0.2",
+    "chrome-remote-interface": "^0.20.0",
     "events": "^1.1.1",
     "express": "^4.15.2",
     "http": "0.0.0",
