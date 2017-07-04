@@ -1,16 +1,20 @@
 {
-  "name": "rellat-otter",
-  "version": "0.0.1",
-  "description": "Rellat Alpha with WebRTC. Simple Collaborative Code editor.",
-  "main": "index.js",
+  "name": "rellat-server",
+  "version": "0.1.2",
+  "description": "The Simultaneous Collaboration Coding service to show people how to make code in real time.",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "debug": "DEBUG=y:* node server.js"
   },
   "keywords": [
+    "Collaboration",
+    "crdt",
     "codemirror",
     "editor",
     "real-time",
+    "multihack",
     "p2p",
     "yjs"
   ],
@@ -35,7 +39,5 @@
     "y-websockets-server": "^9.2.0",
     "yjs": "^12.1.7"
   },
-  "devDependencies": {
-    "browserify": "^14.3.0"
-  }
+  "devDependencies": {}
 }
