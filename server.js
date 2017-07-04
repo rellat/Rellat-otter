@@ -1,3 +1,8 @@
+#!/usr/bin/env node
+/* global process, global */
+'use strict'
+
+const assert = require('assert');
 var express = require('express')
 var app = express()
 var server = require('http').Server(app)
@@ -5,6 +10,9 @@ var io = require('socket.io')(server)
 var cfenv = require('cfenv')
 var signal = require('simple-signal-server')(io)
 var path = require('path')
+var serverconfig
+try { serverconfig = require('./config')
+} catch (e) { serverconfig = {hostname:"127.0.0.1",port:8080}}
 
 // express 모듈을 사용해서 로컬 디랙토리를 웹서버 경로에 라우팅한다.
 app.use('/', express.static(path.join(__dirname, 'mhweb')))
@@ -16,7 +24,7 @@ app.get('/', function (req, res, next) {
 
 // routing으로 oEmbed 설정 참고: http://oembed.com/ -> 5.1. Video example
 app.get('/embed', function (req, res, next) {
-  var resURL = 'https://rationalcoding.github.io/multihack-web/'+'?embed=true&room='+encodeURI(req.query.room)
+  var resURL = 'https://'+serverconfig.hostname+'/'+'?embed=true&room='+encodeURI(req.query.room)
 
   res.setHeader('Content-Type', 'application/json')
   res.send(JSON.stringify({
@@ -36,60 +44,90 @@ var calls = {}
 var rooms = {}
 var sockets = {}
 
+var Y = require('yjs')
+Y.debug.log = console.log.bind(console)
+const log = Y.debug('y:websockets-server')
+require('y-memory')(Y)
+try {  require('y-leveldb')(Y)
+} catch (err) {}
+try {  // try to require local y-websockets-server
+  require('./y-websockets-server')(Y)
+} catch (err) {  // otherwise require global y-websockets-server
+  console.log('Can not find custom y-websockets-server moudule!');
+}
+require('y-array')(Y)
+require('y-map')(Y)
+require('y-text')(Y)
+require('y-richtext')(Y)
+
+global.yInstances = {}
+function getInstanceOfY (room) {
+  if (global.yInstances[room] == null) {
+    global.yInstances[room] = Y({
+      db: {
+        name: 'leveldb',
+        dir: 'leveldb-data',
+        namespace: room,
+        // cleanStart: true
+        cleanStart: false
+      },
+      connector: {
+        name: 'websockets-server',
+        room: room,
+        io: io,
+        debug: true
+      },
+      share: {}
+    })
+  }
+  return global.yInstances[room]
+}
+function onceReady (target, f) {
+  if (!target) {
+    log('keep looking for target')
+    setTimeout(onceReady.bind(this, target, f),10)
+  } else {
+    f()
+  }
+}
+
 // websocket은 트래픽 중계용도로 사용한다. multihack-core 참고
 io.on('connection', function (socket) {
   sockets[socket.id] = socket
 
-  socket.emit('id', socket.id)
-
-  socket.on('join', function (data) {
-    if (!data) return
-    if (!data.room) return
-
-    socket.join(data.room)
-    socket.room = data.room
-    socket.nickname = data.nickname || 'Guest'
-    socket.nop2p = data.nop2p
-
-    rooms[socket.room] = rooms[socket.room] || [] // create room if missing
-
-    // do discovery (for no-p2p peers)
-    rooms[socket.room].forEach(function (id) {
-      socket.emit('peer-join', {
-        id: id,
-        nickname: sockets[id].nickname,
-        nop2p: sockets[id].nop2p
-      })
+  socket.on('joinRoom', function (message) {
+    log('User "%s" joins room "%s"', socket.id, message.room)
+    socket.join(message.room)
+    socket.room = message.room || 'notitle'
+    socket.nickname = message.nickname || 'Guest'
+    socket.nop2p = message.nop2p || false
+    getInstanceOfY(message.room).then(function (y) {
+      global.y = y // TODO: remove !!!
+      if (!rooms[socket.room]) rooms[socket.room] = []
+      // create room if missing
+      y.connector.userJoined(socket.id, 'slave')
+      rooms[socket.room].push(socket.id) // add to room
     })
-
-    rooms[socket.room].push(socket.id) // add to room
-
     // announce connect (for no-p2p peers)
     socket.broadcast.to(socket.room).emit('peer-join', {
       id: socket.id,
       nickname: socket.nickname,
       nop2p: socket.nop2p
     })
-
-    socket.emit('join')
   })
 
   // forward data (for no-p2p peers)
-  socket.on('forward', function (data) {
-    if (!socket.room || !data || !data.target) return
-    data.id = socket.id
-    data.nop2p = socket.nop2p
-
-    if (socket.target === socket.room && !socket.nop2p) {
-      // when sending to the whole room, we only want to send to those peers
-      // that we don't already have a p2p connection with
-      rooms[socket.room].forEach(function (id) {
-        if (sockets[id].nop2p) {
-          socket.broadcast.to(id).emit('forward', data)
-        }
+  socket.on('yjsSocketMessage', function (msg) {
+    if (msg.room != null) {
+      getInstanceOfY(msg.room).then(function (y) {
+        onceReady(y.connector.connections[socket.id], function () {
+          msg.sender = socket.id
+          y.connector.receiveMessage(socket.id, msg)
+          .catch(function(error){
+            log(''+ y.connector.connections[socket.id] + ' unable to deliver message: ' + JSON.stringify(msg))
+          })
+        })
       })
-    } else {
-      socket.broadcast.to(data.target).emit('forward', data)
     }
   })
 
@@ -111,37 +149,38 @@ io.on('connection', function (socket) {
   })
 
   socket.on('disconnect', function () {
-    if (!socket.room) return
+    getInstanceOfY(socket.room).then(function (y) {
+      // announce disconnect (for no-p2p peers)
+      socket.broadcast.to(socket.room).emit('peer-leave', {
+        id: socket.id,
+        nickname: socket.nickname,
+        nop2p: socket.nop2p
+      })
 
-    // announce disconnect (for no-p2p peers)
-    socket.broadcast.to(socket.room).emit('peer-leave', {
-      id: socket.id,
-      nickname: socket.nickname,
-      nop2p: socket.nop2p
+      calls[socket.room] = calls[socket.room] || []
+      var index = calls[socket.room].indexOf(socket.id)
+      if (index !== -1) calls[socket.room].splice(index, 1)
+
+      rooms[socket.room] = rooms[socket.room] || []
+      index = rooms[socket.room].indexOf(socket.id)
+      if (index !== -1) rooms[socket.room].splice(index, 1)
+
+      y.connector.userLeft(socket.id)
     })
-
-    calls[socket.room] = calls[socket.room] || []
-    var index = calls[socket.room].indexOf(socket.id)
-    if (index !== -1) calls[socket.room].splice(index, 1)
-
-    rooms[socket.room] = rooms[socket.room] || []
-    index = rooms[socket.room].indexOf(socket.id)
-    if (index !== -1) rooms[socket.room].splice(index, 1)
-
-    // announce disconnect (for nop2p peers)
-    socket.broadcast.to(socket.room).emit('peer-leave', {
-      id: socket.id,
-      nickname: socket.nickname,
-      nop2p: socket.nop2p
-    })
-
     delete sockets[socket.id]
+  })
+  socket.on('leaveRoom', function (room) {
+    getInstanceOfY(room).then(function (y) {
+      var i = rooms.indexOf(room)
+      index = rooms[socket.room].indexOf(socket.id)
+      if (index !== -1) rooms[socket.room].splice(index, 1)
+      y.connector.userLeft(socket.id)
+    })
   })
 })
 
 signal.on('discover', function (request) {
   if (!request.metadata.room) return
-
   var peerIDs = rooms[request.metadata.room] || [] // TODO: Loose mesh
   request.discover(peerIDs)
 })
@@ -151,14 +190,10 @@ signal.on('request', function (request) {
 })
 
 // 웹서버를 시작한다.
-
 // var appEnv = cfenv.getAppEnv()
 // server.listen(appEnv.port, appEnv.bind, function() {
 //     console.log("server starting on " + appEnv.url)
 // })
-// server.listen(80, '0.0.0.0', function() {
-//   console.log("server starting on ide.rellat.com 80")
-// })
-server.listen(8080, '0.0.0.0', function() {
-  console.log("server starting on localhost 8080")
+server.listen(serverconfig.port, '0.0.0.0', function() {
+  console.log("server starting on "+serverconfig.hostname+":"+serverconfig.port)
 })
