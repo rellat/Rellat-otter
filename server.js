@@ -2,7 +2,7 @@
 /* global process, global */
 'use strict'
 
-const assert = require('assert');
+const assert = require('assert')
 var express = require('express')
 var app = express()
 var server = require('http').Server(app)
@@ -12,19 +12,19 @@ var signal = require('simple-signal-server')(io)
 var path = require('path')
 var serverconfig
 try { serverconfig = require('./config')
-} catch (e) { serverconfig = {hostname:"127.0.0.1",port:8080}}
+} catch (e) { serverconfig = {hostname: '127.0.0.1',port: process.env.PORT || 8080} }
 
 // express 모듈을 사용해서 로컬 디랙토리를 웹서버 경로에 라우팅한다.
 app.use('/', express.static(path.join(__dirname, 'mhweb')))
 // 최상위 도메인으로 접속하면 ./mhweb 폴더에서 시작
 app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/mhweb/index.html')
-  // 파일명을 명시하지 않으면 index.html을 출력
+// 파일명을 명시하지 않으면 index.html을 출력
 })
 
 // routing으로 oEmbed 설정 참고: http://oembed.com/ -> 5.1. Video example
 app.get('/embed', function (req, res, next) {
-  var resURL = 'https://'+serverconfig.hostname+'/'+'?embed=true&room='+encodeURI(req.query.room)
+  var resURL = 'https://' + serverconfig.hostname + '/' + '?embed=true&room=' + encodeURI(req.query.room)
 
   res.setHeader('Content-Type', 'application/json')
   res.send(JSON.stringify({
@@ -36,7 +36,7 @@ app.get('/embed', function (req, res, next) {
     title: 'Multihack',
     height: '300',
     width: '500',
-    html: '<iframe src="'+resURL+'" scrolling="no" frameborder="0" height="300" allowtransparency="true" style="width: 100%; overflow: hidden;"></iframe>'
+    html: '<iframe src="' + resURL + '" scrolling="no" frameborder="0" height="300" allowtransparency="true" style="width: 100%; overflow: hidden;"></iframe>'
   }))
 })
 
@@ -50,10 +50,10 @@ const log = Y.debug('y:websockets-server')
 require('y-memory')(Y)
 try {  require('y-leveldb')(Y)
 } catch (err) {}
-try {  // try to require local y-websockets-server
+try { // try to require local y-websockets-server
   require('./y-websockets-server')(Y)
-} catch (err) {  // otherwise require global y-websockets-server
-  console.log('Can not find custom y-websockets-server moudule!');
+} catch (err) { // otherwise require global y-websockets-server
+  console.log('Can not find custom y-websockets-server moudule!')
 }
 require('y-array')(Y)
 require('y-map')(Y)
@@ -85,7 +85,7 @@ function getInstanceOfY (room) {
 function onceReady (target, f) {
   if (!target) {
     log('keep looking for target')
-    setTimeout(onceReady.bind(this, target, f),10)
+    setTimeout(onceReady.bind(this, target, f), 10)
   } else {
     f()
   }
@@ -123,9 +123,9 @@ io.on('connection', function (socket) {
         onceReady(y.connector.connections[socket.id], function () {
           msg.sender = socket.id
           y.connector.receiveMessage(socket.id, msg)
-          .catch(function(error){
-            log(''+ y.connector.connections[socket.id] + ' unable to deliver message: ' + JSON.stringify(msg))
-          })
+            .catch(function (error) {
+              log('' + y.connector.connections[socket.id] + ' unable to deliver message: ' + JSON.stringify(msg))
+            })
         })
       })
     }
@@ -194,6 +194,6 @@ signal.on('request', function (request) {
 // server.listen(appEnv.port, appEnv.bind, function() {
 //     console.log("server starting on " + appEnv.url)
 // })
-server.listen(serverconfig.port, '0.0.0.0', function() {
-  console.log("server starting on "+serverconfig.hostname+":"+serverconfig.port)
+server.listen(serverconfig.port, '0.0.0.0', function () {
+  console.log('server starting on ' + serverconfig.hostname + ':' + serverconfig.port)
 })
