@@ -39,5 +39,13 @@
     "y-websockets-server": "^9.2.0",
     "yjs": "^12.1.7"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kifhan/Rellat-otter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kifhan/Rellat-otter/issues"
+  },
+  "homepage": "https://github.com/kifhan/Rellat-otter#readme"
 }
