@@ -19,9 +19,9 @@ EXPOSE 443
 CMD [ "npm", "start" ]
 
 # setting SSH from https://docs.docker.com/engine/examples/running_ssh_service/
-RUN apt-get update && sudo apt install -y git openssh-server 
+RUN apt-get update && apt-get install -y git openssh-server 
 RUN mkdir /var/run/sshd
-RUN echo 'root:ma@38exyM' | chpasswd
+RUN echo 'root:rellatotter' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
@@ -33,5 +33,5 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
 
-# docker build -t kifhan/Rellat .
-# docker run -p 80 -p 8080 -p 3000 -p 2121:22 -p 443 -d kifhan/Rellat
+# docker build -t kifhan/rellat .
+# docker run -p 80:80 -p 8080:8080 -p 3000:3000 -p 2121:22 -p 443:443 -d kifhan/rellat
