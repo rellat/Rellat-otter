@@ -4,6 +4,7 @@ Rellat Alpha with WebRTC. Simple Collaborative Code editor. Code name is Otter.
 
 This is web server + socket server + web client.
 You can test it on http://ide.rellat.com/
+Or https://rellat.herokuapp.com/
 
 ## Install
 
