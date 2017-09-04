@@ -42,10 +42,10 @@
     "devDependencies": {},
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/kifhan/Rellat-otter.git"
+        "url": "git+https://github.com/rellat/Rellat-otter.git"
     },
     "bugs": {
-        "url": "https://github.com/kifhan/Rellat-otter/issues"
+        "url": "https://github.com/rellat/Rellat-otter/issues"
     },
-    "homepage": "https://github.com/kifhan/Rellat-otter#readme"
+    "homepage": "https://github.com/rellat/Rellat-otter#readme"
 }
