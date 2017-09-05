@@ -1,0 +1,11 @@
+{
+  "undef": true,
+  "unused": true,
+  "devel": true,
+  "asi": true,
+  "browser": true,
+  "browserify": true,
+  "globals": {
+    "MY_GLOBAL": true
+  }
+}
