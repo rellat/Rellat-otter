@@ -1,8 +1,7 @@
 
 node_modules
-old
 .vscode
 .eslintrc.json
 leveldb-data
-server_example.js
 config.js
+.DS_Store

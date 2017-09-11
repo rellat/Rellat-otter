@@ -1,51 +1,53 @@
 {
-    "name": "rellat-server",
-    "version": "0.1.2",
-    "description": "The Simultaneous Collaboration Coding service to show people how to make code in real time.",
-    "main": "server.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node server.js",
-        "debug": "DEBUG=y:* nodemon server.js"
-    },
-    "keywords": [
-        "Collaboration",
-        "crdt",
-        "codemirror",
-        "editor",
-        "real-time",
-        "multihack",
-        "p2p",
-        "yjs"
-    ],
-    "author": "Chase Lee",
-    "license": "MIT",
-    "dependencies": {
-        "cfenv": "^1.0.4",
-        "child_process": "^1.0.2",
-        "chrome-remote-interface": "^0.20.0",
-        "events": "^1.1.1",
-        "express": "^4.15.2",
-        "http": "0.0.0",
-        "path": "^0.12.7",
-        "simple-signal-server": "^1.2.2",
-        "socket.io": "^1.7.3",
-        "y-array": "^10.0.6",
-        "y-leveldb": "0.0.1",
-        "y-map": "^10.0.5",
-        "y-richtext": "^9.0.8",
-        "y-text": "^9.4.0",
-        "y-websockets-client": "^8.0.15",
-        "y-websockets-server": "^9.2.0",
-        "yjs": "^12.1.7"
-    },
-    "devDependencies": {},
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/rellat/Rellat-otter.git"
-    },
-    "bugs": {
-        "url": "https://github.com/rellat/Rellat-otter/issues"
-    },
-    "homepage": "https://github.com/rellat/Rellat-otter#readme"
+  "name": "rellat-server",
+  "version": "0.1.2",
+  "description": "The Simultaneous Collaboration Coding service to show people how to make code in real time.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "debug": "DEBUG=y:* nodemon server.js"
+  },
+  "keywords": [
+    "Collaboration",
+    "crdt",
+    "codemirror",
+    "editor",
+    "real-time",
+    "multihack",
+    "p2p",
+    "yjs"
+  ],
+  "author": "Chase Lee",
+  "license": "MIT",
+  "dependencies": {
+    "cfenv": "^1.0.4",
+    "child_process": "^1.0.2",
+    "chrome-remote-interface": "^0.20.0",
+    "events": "^1.1.1",
+    "express": "^4.15.2",
+    "http": "0.0.0",
+    "path": "^0.12.7",
+    "simple-signal-server": "^1.2.2",
+    "socket.io": "^1.7.3",
+    "y-array": "^10.0.6",
+    "y-leveldb": "0.0.1",
+    "y-map": "^10.0.5",
+    "y-richtext": "^9.0.8",
+    "y-text": "^9.4.0",
+    "y-websockets-client": "^8.0.15",
+    "y-websockets-server": "^9.2.0",
+    "yjs": "^12.1.7"
+  },
+  "devDependencies": {
+    "standard": "^10.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rellat/Rellat-otter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rellat/Rellat-otter/issues"
+  },
+  "homepage": "https://github.com/rellat/Rellat-otter#readme"
 }
