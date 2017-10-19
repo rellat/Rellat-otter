@@ -10,6 +10,7 @@ var io = require('socket.io')(server)
 var cfenv = require('cfenv')
 var signal = require('simple-signal-server')(io)
 var path = require('path')
+var bodyParser = require('body-parser')
 var serverconfig
 try { serverconfig = require('./config')
 } catch (e) { serverconfig = {hostname: '127.0.0.1',port: process.env.PORT || 8080} }
@@ -17,10 +18,15 @@ try { serverconfig = require('./config')
 // express 모듈을 사용해서 로컬 디랙토리를 웹서버 경로에 라우팅한다.
 app.use('/', express.static(path.join(__dirname, 'mhweb')))
 // 최상위 도메인으로 접속하면 ./mhweb 폴더에서 시작
+/*
 app.get('/', function (req, res, next) {
   res.sendFile(__dirname + '/mhweb/index.html')
 // 파일명을 명시하지 않으면 index.html을 출력
 })
+*/
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: false}))
+app.use('/', require('./routes'))
 
 // routing으로 oEmbed 설정 참고: http://oembed.com/ -> 5.1. Video example
 app.get('/embed', function (req, res, next) {
@@ -172,7 +178,7 @@ io.on('connection', function (socket) {
   socket.on('leaveRoom', function (room) {
     getInstanceOfY(room).then(function (y) {
       var i = rooms.indexOf(room)
-      index = rooms[socket.room].indexOf(socket.id)
+      var index = rooms[socket.room].indexOf(socket.id)
       if (index !== -1) rooms[socket.room].splice(index, 1)
       y.connector.userLeft(socket.id)
     })
@@ -194,6 +200,16 @@ signal.on('request', function (request) {
 // server.listen(appEnv.port, appEnv.bind, function() {
 //     console.log("server starting on " + appEnv.url)
 // })
+
+// DB setting
+var mongoose = require('mongoose')
+var db = mongoose.connection
+mongoose.connect('mongodb://127.0.0.1/rellatIDE')
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', function () {
+  mongoose.Promise = global.Promise;
+})
+
 server.listen(serverconfig.port, '0.0.0.0', function () {
   console.log('server starting on ' + serverconfig.hostname + ':' + serverconfig.port)
 })
