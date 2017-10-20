@@ -13,7 +13,7 @@ Or https://rellat.herokuapp.com/
 - Download source from github.
 
 ```
-git clone --recursive https://github.com/kifhan/Rellat-otter.git
+git clone --recursive https://github.com/rellat/Rellat-otter.git
 cd Rellat-otter
 npm install
 cd mhweb
