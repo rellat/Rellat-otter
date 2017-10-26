@@ -2,7 +2,6 @@
 /* global process, global */
 'use strict'
 
-const assert = require('assert')
 var express = require('express')
 var app = express()
 var server = require('http').Server(app)
@@ -12,11 +11,12 @@ var signal = require('simple-signal-server')(io)
 var path = require('path')
 var bodyParser = require('body-parser')
 var serverconfig
-try { serverconfig = require('./config')
-} catch (e) { serverconfig = {hostname: '127.0.0.1',port: process.env.PORT || 8080} }
+try {
+  serverconfig = require('./config')
+} catch (e) { serverconfig = {hostname: '127.0.0.1', port: process.env.PORT || 8080} }
 
 // express 모듈을 사용해서 로컬 디랙토리를 웹서버 경로에 라우팅한다.
-app.use('/', express.static(path.join(__dirname, 'mhweb')))
+app.use('/', express.static(path.join(__dirname, 'mhweb/static')))
 // 최상위 도메인으로 접속하면 ./mhweb 폴더에서 시작
 /*
 app.get('/', function (req, res, next) {
@@ -54,7 +54,8 @@ var Y = require('yjs')
 Y.debug.log = console.log.bind(console)
 const log = Y.debug('y:websockets-server')
 require('y-memory')(Y)
-try {  require('y-leveldb')(Y)
+try {
+  require('y-leveldb')(Y)
 } catch (err) {}
 try { // try to require local y-websockets-server
   require('./y-websockets-server')(Y)
@@ -129,7 +130,7 @@ io.on('connection', function (socket) {
         onceReady(y.connector.connections[socket.id], function () {
           msg.sender = socket.id
           y.connector.receiveMessage(socket.id, msg)
-            .catch(function (error) {
+            .catch(function () {
               log('' + y.connector.connections[socket.id] + ' unable to deliver message: ' + JSON.stringify(msg))
             })
         })
@@ -207,7 +208,7 @@ var db = mongoose.connection
 mongoose.connect('mongodb://127.0.0.1/rellatIDE')
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function () {
-  mongoose.Promise = global.Promise;
+  mongoose.Promise = global.Promise
 })
 
 server.listen(serverconfig.port, '0.0.0.0', function () {
